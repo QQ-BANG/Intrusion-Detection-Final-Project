@@ -32,7 +32,7 @@ You have two options.
 2. Hit `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) to open the command
    palette.
 3. Type `Git: Clone` and pick that command.
-4. Paste the repo URL: `https://github.com/QQ-BANG/Intrusion-Detection.git`
+4. Paste the repo URL: `https://github.com/QQ-BANG/Intrusion-Detection-Final-Project.git`
 5. Pick a folder on your computer to put it in.
 6. When it asks "Open the cloned repository?", click **Open**.
 
