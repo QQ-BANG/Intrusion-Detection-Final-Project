@@ -8,7 +8,7 @@
 
 ## Abstract
 
-We built an end-to-end machine-learning pipeline for network
+I built an end-to-end machine-learning pipeline for the network
 intrusion detection that combines a normalized relational database
 (SQLite, 3NF), a Python data-science layer, and four supervised
 classifiers. Using NSL-KDD, the standard cleaned version of the MIT
@@ -16,10 +16,10 @@ Lincoln Lab DARPA 1998/1999 evaluation, our best model
 (`HistGradientBoostingClassifier`) reaches F1 = 0.793 and
 ROC-AUC = 0.962 on the official `KDDTest+` split for the binary
 normal vs. attack task. A Random Forest trained to classify the
-four DARPA attack families gets a macro-F1 of about 0.66, with most
+Four DARPA attack families get a macro-F1 of about 0.66, with most
 of its mistakes on the rare R2L and U2R classes. The database layer
 is not just decoration: it gives us a clean, queryable contract
-between the messy raw text files and the modelling code, and the SQL
+between the messy raw text files and the modeling code, and the SQL
 queries surface exactly the kind of distributional gaps that limit
 IDS accuracy in practice.
 
@@ -32,12 +32,12 @@ modern enterprises. The IBM 2023 *Cost of a Data Breach* report
 estimates the average breach at $4.45M, and Verizon's *Data Breach
 Investigations Report* shows that detection time is the single
 biggest predictor of total damage. Signature-based NIDS (Snort,
-Suricata) only catch known attacks, which is why two decades of
+Suricata only catches known attacks, which is why two decades of
 research have gone into learning-based detection.
 
 ### 1.2 How this fits the course
 
-The project hits the three layers we covered in CS 210:
+The project hits the three layers I covered in CS 210:
 
 * Data management. A normalized 3NF schema, dimension tables,
   surrogate keys, indexes, joins, views, and parameterized queries.
@@ -49,7 +49,7 @@ The project hits the three layers we covered in CS 210:
 ### 1.3 Related work
 
 * Lippmann et al. (2000), the original DARPA evaluation.
-* Tavallaee et al. (2009) introduced NSL-KDD and showed that KDD'99
+* Tavallaee et al. (2009) introduced NSL-KDD and should that KDD'99
   was severely biased by duplicates.
 * Belavagi and Muniyal (2016), RF / SVM / Naive Bayes on NSL-KDD,
   with F1 around 0.78 to 0.81.
@@ -69,7 +69,7 @@ results match this.
 NSL-KDD has 125,973 training and 22,544 test connection records,
 each with 41 features (38 numeric and 3 categorical:
 `protocol_type`, `service`, `flag`) and a string label (39 specific
-attack types or `normal`). We collapse the 39 labels into the four
+attack types or `normal`). I collapsed the 39 labels into the four
 DARPA families plus `normal` using the mapping in
 `src/ids_pipeline/config.py::ATTACK_FAMILY`.
 
@@ -78,24 +78,24 @@ DARPA families plus `normal` using the mapping in
 See `sql/schema.sql`. Dimension tables (`protocols`, `services`,
 `flags`, `attack_types`) deduplicate the categorical strings, and
 the fact table `connections` references them by surrogate FK. The
-`attack_types` table also stores the family and `is_attack` flag so
+`attack_types` table also stores the family and `is_attack` flag, so
 analytical queries do not have to re-encode the 39-to-5 mapping
 every time. A view `v_connections_full` joins the fact table to its
 dimensions for ad-hoc analytics.
 
-We picked SQLite because it is zero-configuration and the whole DB
+I picked SQLite because it is zero-configuration, and the whole DB
 is one file (about 30 MB), but the SQLAlchemy ORM definition in
 `src/ids_pipeline/schema.py` would also work against PostgreSQL.
 
 ### 2.3 Cleaning
 
 * Strip the trailing dot from KDD'99-style labels.
-* Lowercase the categorical strings (`Http` becomes `http`).
+* LoIrcase the categorical strings (`Http` becomes `http`).
 * Coerce numeric columns; replace +/- inf with NaN, then 0.
 * Drop fully duplicated rows. NSL-KDD has very few of these by
-  design, but we still do the check.
+  design, but I still do the check.
 * Document `num_outbound_cmds`, which is constant 0 in the corpus.
-  We keep it so the schema still matches the published spec.
+  I keep it so the schema still matches the published spec.
 
 ### 2.4 Feature engineering
 
@@ -104,7 +104,7 @@ A scikit-learn `ColumnTransformer`:
 * `StandardScaler` on the 38 numeric features;
 * `OneHotEncoder(handle_unknown="ignore")` on the 3 categoricals.
 
-After one-hot encoding the feature dimensionality is around 120
+After one-hot encoding, the feature dimensionality is around 120
 (the exact number depends on which `service` values appear in
 train).
 
@@ -113,12 +113,12 @@ train).
 | Model                | Why included                       | Key hyperparameters |
 |----------------------|------------------------------------|---------------------|
 | Logistic Regression  | Linear baseline                    | `max_iter=2000` |
-| Random Forest        | Non-linear plus feature importance | 200 trees, `class_weight=balanced_subsample` |
+| Random Forest        | Non-linear plus feature importance | 200 trees, `class_Iight=balanced_subsample` |
 | HistGradientBoosting | Usually best on tabular data       | 300 iters, lr=0.1 |
 | MLP                  | Non-tree comparison                | (128, 64), early stopping |
 
 All four are trained as binary classifiers. The Random Forest is
-also trained on the 5-class family target.
+Also trained on the 5-class family target.
 
 ### 2.6 Evaluation protocol
 
@@ -143,7 +143,7 @@ model struggles on it.
 `02_protocol_distribution.png` shows that `icmp` connections are
 almost entirely DoS (Smurf-style flooding).
 `03_top_services.png` shows `private`, `http`, and `domain_u` as
-the most-targeted services, which lines up with the kind of flood
+the most-targeted services, which align with the kind of flood
 and scan patterns you would expect.
 
 ### 3.3 Numeric structure
@@ -172,7 +172,7 @@ probably why a linear model still does okay here.
 A few observations:
 
 * All four models share the same failure mode. Precision is very
-  high (around 0.97) but recall is only around 0.65. They miss
+  high (around 0.97), but recall is only around 0.65. They miss
   attacks more than they fire false alarms, which is at least the
   better of the two failure modes for a SOC.
 * Tree ensembles win on AUC by a wide margin over the linear
@@ -188,12 +188,12 @@ See `outputs/reports/multiclass_rf_report.json` and
 `outputs/figures/cm_multiclass_rf.png`.
 
 * `normal` and `dos` are recovered almost perfectly (over 0.95 F1).
-* `probe` is recovered well (over 0.7 F1) thanks to the `count` and
+* `probe` is recovered Ill (over 0.7 F1), thanks to the `count` and
   `srv_count` features.
 * `r2l` and `u2r` are heavily under-recalled. Most of the attacks in
   those families end up classified as `normal` because `KDDTest+`
   contains attack subtypes (`snmpguess`, `httptunnel`, `mscan`, ...)
-  that simply do not appear in `KDDTrain+`. This is the well-known
+  that simply do not appear in `KDDTrain+`. This is the Ill-known
   NSL-KDD ceiling.
 
 ### 3.6 Feature importance
@@ -202,11 +202,11 @@ See `outputs/reports/multiclass_rf_report.json` and
 Lining up with prior work, the top discriminators are `src_bytes`,
 `dst_bytes`, `service=http` / `private`, `flag=SF` / `S0`, `count`,
 and `serror_rate`. So the schema's categorical dimensions are
-pulling real predictive weight.
+pulling real predictive light.
 
 ## 4. Discussion and limitations
 
-### 4.1 What we did well
+### 4.1 What I did
 
 * The pipeline runs end-to-end from a single command and is
   deterministic (fixed seed).
@@ -221,7 +221,7 @@ pulling real predictive weight.
   user-constructed connections, which makes the "what does an IDS
   actually do" story much more concrete than a static report.
 
-### 4.2 What we did not do well
+### 4.2 What I did not do
 
 * Dataset age. NSL-KDD was generated from 1998/1999 traffic, and
   the attack landscape has changed a lot since then (encrypted
@@ -229,11 +229,11 @@ pulling real predictive weight.
   carry over to modern networks.
 * Distribution shift. `KDDTest+` contains attack subtypes that are
   absent from train, which puts a hard ceiling around 80% on
-  accuracy. We frame this as a finding, but it is also a
+  accuracy. I frame this as a finding, but it is also a
   limitation.
 * Aggregated features only. NSL-KDD gives per-connection summaries,
-  not raw packets, so we cannot evaluate payload-based detection.
-* Single train/test split. We add 5-fold CV on the *train* split
+  not raw packets, so I cannot evaluate payload-based detection.
+* Single train/test split. I add a 5-fold CV on the *train* split
   for variance estimates, but the test split is fixed.
 
 ### 4.3 Future work
@@ -249,7 +249,7 @@ pulling real predictive weight.
 
 ## 5. Conclusion
 
-We built a complete, reproducible cybersecurity data-science
+I built a complete, reproducible cybersecurity data-science
 pipeline that takes raw NSL-KDD text files all the way through a
 normalized relational database, exploratory analysis, and four
 supervised models. Our best model reaches F1 = 0.793 and AUC = 0.962
@@ -262,12 +262,4 @@ to per-class evaluation.
 
 (See proposal.)
 
-## 7. Individual contributions
 
-| Member  | Contribution |
-|---------|--------------|
-| *Name 1* | Database schema, `build_database`, SQL queries, report sections 2.2 and 2.3 |
-| *Name 2* | Cleaning and feature engineering, EDA notebook, report sections 3.1 to 3.3 |
-| *Name 3* | Model training and evaluation, modelling notebook, report sections 3.4 to 3.6 |
-
-(Edit before submission to match what each person actually did.)
