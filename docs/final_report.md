@@ -40,7 +40,7 @@ it is important to protect this data
 
 The project hits the three layers shown to me in our CS 210 class:
 
-Data management. A normalized 3NF schema, dimension tables, surrogate keys, indexes, joins, views, and parameterized queries. Data science, which encapsulates Cleaning, profiling, visualizing, and reporting on a non-trivial real dataset. Machine learning in the form of Supervised classification with proper preprocessing pipelines, train/test discipline, and decent metrics.
+Data management, which in this case looks like a normalized 3NF schema, dimension tables, surrogate keys, indexes, joins, views, and parameterized queries. Data science, which encapsulates Cleaning, profiling, visualizing, and reporting on a non-trivial real dataset. Machine learning in the form of Supervised classification with proper preprocessing pipelines, train/test discipline, and decent metrics.
 
 ### 1.3 Related work
 
@@ -79,20 +79,14 @@ analytical queries do not have to re-encode the 39-to-5 mapping
 every time. A view `v_connections_full` joins the fact table to its
 dimensions for ad-hoc analytics.
 
-I picked SQLite because it is zero-configuration, and the whole DB
-is one file (about 30 MB), but the SQLAlchemy ORM definition in
+I picked SQLite because it is zero-configuration, and the whole Database
+is one file, but the SQLAlchemy ORM definition in
 `src/ids_pipeline/schema.py` would also work against PostgreSQL.
 
 ### 2.3 Cleaning
 
-* Strip the trailing dot from KDD'99-style labels.
-* LoIrcase the categorical strings (`Http` becomes `http`).
-* Coerce numeric columns; replace +/- inf with NaN, then 0.
-* Drop fully duplicated rows. NSL-KDD has very few of these by
-  design, but I still do the check.
-* Document `num_outbound_cmds`, which is constant 0 in the corpus.
-  I keep it so the schema still matches the published spec.
-
+For preprocessing, I first strip the trailing dot from the KDD'99 style labels so that the attack names are clean and consistent.
+I also converted all the categorical strings to lowercase, so values such as `Http` become `http`.  After that, I coerce the numeric columns into proper numeric types, replace positive and negative infinity values with NaN, and then fill those missing values with 0.  I would also drop any duplicate rows and then document the `num_outbound_cmd` feature, which is constantly 0 throughout the corpus, and I would keep it in the dataset so that the schema continues to match the NSL-KDD Specifications
 ### 2.4 Feature engineering
 
 A scikit-learn `ColumnTransformer`:
@@ -124,6 +118,8 @@ Also trained on the 5-class family target.
   per-class report and confusion matrix for the multi-class version.
 * Optional 5-fold stratified CV on the train split for variance
   estimates (`--cv-folds 5`).
+
+The model is trained on KDDTrain+ and evaluated on KDDTest+, with the test set used only once at the final evaluation stage. For the binary classification version, I report accuracy, precision, recall, F1-score, and ROC-AUC to measure overall performance and the model's ability to separate normal and attack traffic. For the multi-class version, I included a full per class classification report and a confusion matrix so that performance can be compared across each attack category. I also include an optional 5-fold stratified cross-validation step on the training split using --cv-folds 5, which helps estimate how much the model’s performance varies across different training folds.
 
 ## 3. Results
 
@@ -165,32 +161,15 @@ probably why a linear model still does okay here.
 
 (See `outputs/reports/binary_results.csv`.)
 
-A few observations:
 
-* All four models share the same failure mode. Precision is very
-  high (around 0.97), but recall is only around 0.65. They miss
-  attacks more than they fire false alarms, which is at least the
-  better of the two failure modes for a SOC.
-* Tree ensembles win on AUC by a wide margin over the linear
-  baseline (0.96 vs 0.79), so there is a lot of non-linear structure
-  in the feature space.
-* The MLP edges out RF on F1 but trails on AUC. Neural nets are
-  worse-calibrated probabilistic models out of the box, so this is
-  not surprising.
+Here are some of my observations. All four models show the same general failure pattern. Their precision is very high, around 0.97, but their recall is only around 0.65. This means the models are more likely to miss attacks than to create false alarms, which is still the better failure mode for a SOC because it avoids overwhelming analysts with too many incorrect alerts. The tree-based ensemble models perform much better than the linear baseline in terms of AUC, with scores around 0.96 compared to 0.79. This suggests that the dataset contains many nonlinear patterns that linear models cannot capture well. The MLP slightly outperforms the Random Forest in F1-score, but it falls behind on AUC. This is not too surprising because neural networks are often not as well-calibrated as probabilistic models by default, even when their classification performance is strong.
 
 ### 3.5 Multi-class results (Random Forest, 5 classes)
 
 See `outputs/reports/multiclass_rf_report.json` and
 `outputs/figures/cm_multiclass_rf.png`.
 
-* `normal` and `dos` are recovered almost perfectly (over 0.95 F1).
-* `probe` is recovered Ill (over 0.7 F1), thanks to the `count` and
-  `srv_count` features.
-* `r2l` and `u2r` are heavily under-recalled. Most of the attacks in
-  those families end up classified as `normal` because `KDDTest+`
-  contains attack subtypes (`snmpguess`, `httptunnel`, `mscan`, ...)
-  that simply do not appear in `KDDTrain+`. This is the Ill-known
-  NSL-KDD ceiling.
+The multi-class results show that normal and dos traffic are recovered almost perfectly, with F1-scores above 0.95. The probe class is also recovered fairly well, with an F1-score above 0.70, likely because features such as `count` and `srv_count` help capture scanning-style behavior. However, the R2L and U2R classes are heavily under-recalled. Many attacks from these families are incorrectly classified as normal because KDDTest+ contains attack subtypes such as `snmpguess,` `httptunnel` , and `mscan` that do not appear in KDDTrain+. This creates a known performance ceiling in NSL-KDD, where models struggle to recognize attack types they were never exposed to during training.
 
 ### 3.6 Feature importance
 
@@ -204,44 +183,18 @@ pulling real predictive light.
 
 ### 4.1 What I did
 
-* The pipeline runs end-to-end from a single command and is
-  deterministic (fixed seed).
-* The database layer is real: 3NF, indexes, a view, and the FK
-  enforcement is on. It is not just a CSV with a `.sqlite`
-  extension.
-* Four model families are compared on identical splits with the
-  full metric suite plus confusion matrices and ROC.
-* Test discipline. `KDDTest+` is touched once.
-* The Streamlit UI (see `app/streamlit_app.py`) makes the project
-  demoable: the same trained models run live against
-  user-constructed connections, which makes the "what does an IDS
-  actually do" story much more concrete than a static report.
+The pipeline runs end-to-end from a single command and stays deterministic because it uses a fixed random seed. The database layer is also fully implemented rather than being treated like a CSV file with a .sqlite extension. It follows 3NF design, includes indexes, uses a view, and has foreign key enforcement turned on. For modeling, four different model families are compared using the same train/test splits, along with the full metric suite, confusion matrices, and ROC analysis. The project also follows proper test discipline because KDDTest+ is only touched once during the final evaluation. Finally, the Streamlit UI in `app/streamlit_app.py` makes the project much easier to demo because the trained models can run live against user-constructed network connections. This helps make the purpose of an IDS feel much more concrete than it would in a static report.
+
 
 ### 4.2 What I did not do
 
-* Dataset age. NSL-KDD was generated from 1998/1999 traffic, and
-  the attack landscape has changed a lot since then (encrypted
-  traffic, IoT, ransomware, and so on). Numbers do not directly
-  carry over to modern networks.
-* Distribution shift. `KDDTest+` contains attack subtypes that are
-  absent from train, which puts a hard ceiling around 80% on
-  accuracy. I frame this as a finding, but it is also a
-  limitation.
-* Aggregated features only. NSL-KDD gives per-connection summaries,
-  not raw packets, so I cannot evaluate payload-based detection.
-* Single train/test split. I add a 5-fold CV on the *train* split
-  for variance estimates, but the test split is fixed.
+One limitation of this project is the age of the dataset. NSL-KDD was generated from 1998 to 1999 network traffic, and the attack landscape has changed significantly since then with the rise of encrypted traffic, IoT devices, ransomware, and other modern threats. Because of this, the performance numbers from this project should not be assumed to directly transfer to modern networks. Another limitation is distribution shift: KDDTest+ contains attack subtypes that are not present in the training set, which creates a hard ceiling on model accuracy around 80%. I treat this as an important finding, but it is also a limitation of the dataset itself. The dataset also only provides aggregated per-connection features rather than raw packets, so this project cannot evaluate payload-based detection methods. Finally, the evaluation uses a single fixed train/test split. I include optional 5-fold cross-validation on the training split to estimate variance, but the final test set remains fixed.
 
 ### 4.3 Future work
 
-* Re-run on CICIDS-2017 or UNSW-NB15 to evaluate on more modern
-  traffic.
-* Add a streaming evaluation that updates the model online to
-  measure concept drift.
-* Move the database to PostgreSQL and add row-level security for a
-  multi-tenant SOC scenario.
-* Try cost-sensitive learning that is explicitly tuned to a
-  false-alarm budget.
+For future work, I would first re-run the pipeline on a more modern intrusion detection dataset such as CICIDS-2017 or UNSW-NB15. This would make the results more realistic because those datasets include newer traffic patterns and attack behaviors than NSL-KDD. I would also add a streaming evaluation setup in which new network connections arrive over time, and the model is continuously updated or re-evaluated. This would help measure concept drift, which is important because real network behavior changes as users, devices, and attackers change.
+
+Another improvement would be moving the database layer from SQLite to PostgreSQL. PostgreSQL would make the project more realistic for a production style SOC environment because it supports stronger concurrency, better access control, and features like row-level security. That would allow different analysts or tenants to access only the records they are allowed to see. Finally, I suggest using cost-sensitive learning tuned around a specific false-alarm budget. Instead of only maximizing general metrics like accuracy or F1-score, the model could be trained to balance missed attacks against alert volume in a way that better matches how a real SOC operates.
 
 ## 5. Conclusion
 
