@@ -40,11 +40,7 @@ it is important to protect this data
 
 The project hits the three layers shown to me in our CS 210 class:
 
-Data management. A normalized 3NF schema, dimension tables,
-  surrogate keys, indexes, joins, views, and parameterized queries. 
-  Data science, which encapsulates Cleaning, profiling, visualizing, and reporting on a
-  non-trivial real dataset. Machine learning in the form of Supervised classification with proper
-  preprocessing pipelines, train/test discipline, and decent metrics.
+Data management. A normalized 3NF schema, dimension tables, surrogate keys, indexes, joins, views, and parameterized queries. Data science, which encapsulates Cleaning, profiling, visualizing, and reporting on a non-trivial real dataset. Machine learning in the form of Supervised classification with proper preprocessing pipelines, train/test discipline, and decent metrics.
 
 ### 1.3 Related work
 
