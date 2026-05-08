@@ -3,15 +3,14 @@
 **Course:** CS 210, Data Management for Data Science
 **Authors:** *Q'Andre Small*
 **Date:** *5/7/26*
-**Repository:** *<GitHub URL>*
 
 ## Abstract
 
-I built an end-to-end machine-learning pipeline for the network
+I built a machine-learning pipeline for the network
 intrusion detection that combines a normalized relational database
 (SQLite, 3NF), a Python data-science layer, and four supervised
 classifiers. Using NSL-KDD, the standard cleaned version of the MIT
-Lincoln Lab DARPA 1998/1999 evaluation, our best model
+Lincoln Lab DARPA 1998/1999 evaluation, the best model
 (`HistGradientBoostingClassifier`) reaches F1 = 0.793 and
 ROC-AUC = 0.962 on the official `KDDTest+` split for the binary
 normal vs. attack task. A Random Forest trained to classify the
@@ -30,19 +29,21 @@ Network intrusion detection is one of the main lines of defense for
 modern enterprises. The IBM 2023 *Cost of a Data Breach* report
 estimates the average breach at $4.45M, and Verizon's *Data Breach
 Investigations Report* shows that detection time is the single
-biggest predictor of total damage. Signature-based NIDS (Snort,
+biggest predictor of total damage. Signature based NIDS Snort,
 Suricata only catches known attacks, which is why two decades of
-research have gone into learning-based detection.
+research have gone into learning-based detection.  With more and more people 
+becoming a part of the digital space, it seems that the number of accounts
+and information a database can hold is endless, which is why now more than ever
+it is important to protect this data
 
 ### 1.2 How this fits the course
 
-The project hits the three layers I covered in CS 210:
+The project hits the three layers shown to me in our CS 210 class:
 
-* Data management. A normalized 3NF schema, dimension tables,
-  surrogate keys, indexes, joins, views, and parameterized queries.
-* Data science. Cleaning, profiling, visualizing, and reporting on a
-  non-trivial real dataset.
-* Machine learning. Supervised classification with proper
+Data management. A normalized 3NF schema, dimension tables,
+  surrogate keys, indexes, joins, views, and parameterized queries. 
+  Data science, which encapsulates Cleaning, profiling, visualizing, and reporting on a
+  non-trivial real dataset. Machine learning in the form of Supervised classification with proper
   preprocessing pipelines, train/test discipline, and decent metrics.
 
 ### 1.3 Related work
