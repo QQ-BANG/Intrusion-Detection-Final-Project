@@ -1,8 +1,8 @@
 # CS 210 Final Report: Intrusion Detection on NSL-KDD
 
 **Course:** CS 210, Data Management for Data Science
-**Authors:** *<your name(s) here>*
-**Date:** *<submission date>*
+**Authors:** *Q'Andre Small*
+**Date:** *5/7/26*
 **Repository:** *<GitHub URL>*
 **Demo video:** *<YouTube / Drive URL>*
 
