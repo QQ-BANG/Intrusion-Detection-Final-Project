@@ -4,7 +4,6 @@
 **Authors:** *Q'Andre Small*
 **Date:** *5/7/26*
 **Repository:** *<GitHub URL>*
-**Demo video:** *<YouTube / Drive URL>*
 
 ## Abstract
 
