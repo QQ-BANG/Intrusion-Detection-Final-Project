@@ -1,5 +1,5 @@
 # SQLAlchemy mirror of sql/schema.sql. I keep both because the .sql file is easier for inserts from Python. Same schema either way.
-# this too k a lot of time and cross checking because of the sheer amount of components
+# this too k a lot of time and cross checking because of the sheer amount of componentsd
 
 
 from sqlalchemy import (
@@ -13,25 +13,25 @@ class Base(DeclarativeBase):
 
 
 class Protocol(Base):
-    tableName = "protocols"
+    __tablename__ = "protocols"
     protocol_id = Column(Integer, primary_key=True, autoincrement=True)
     protocol_name = Column(String, nullable=False, unique=True)
 
 
 class Service(Base):
-    tableName = "services"
+    __tablename__ = "services"
     service_id = Column(Integer, primary_key=True, autoincrement=True)
     service_name = Column(String, nullable=False, unique=True)
 
 
 class Flag(Base):
-    tableName = "flags"
+    __tablename__ = "flags"
     flag_id = Column(Integer, primary_key=True, autoincrement=True)
     flag_name = Column(String, nullable=False, unique=True)
 
 
 class AttackType(Base):
-    tableName = "attack_types"
+    __tablename__ = "attack_types"
     attack_id = Column(Integer, primary_key=True, autoincrement=True)
     attack_label = Column(String, nullable=False, unique=True)
     attack_family = Column(String, nullable=False)
@@ -39,7 +39,7 @@ class AttackType(Base):
 
 
 class Connection(Base):
-    tableName = "connections"
+    __tablename__ = "connections"
     conn_id = Column(Integer, primary_key=True, autoincrement=True)
     split = Column(String, nullable=False)
 
