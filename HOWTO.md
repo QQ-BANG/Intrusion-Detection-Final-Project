@@ -187,11 +187,7 @@ Streamlit web app.
 2. Pick **"Streamlit web UI"** from the dropdown.
 3. Hit F5.
 4. (Alternative, if the extensions don't work, just run this command in the terminal)
- streamlit run app/streamlit_app.py
-A browser tab will open at `http://localhost:8501` automatically. If
-you'd rather have the UI **inside** VS Code, hit `Ctrl+Shift+P`, run
-**"Simple Browser: Show"**, and paste `http://localhost:8501`. The
-app shows up in a panel right next to your code.
+ streamlit run app/streamlit_app.py)
 
 The app has 5 pages in its sidebar:
 
