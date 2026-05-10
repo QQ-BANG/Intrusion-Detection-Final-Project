@@ -85,42 +85,9 @@ still runs.
 ## Quick start
 
 > See **[HOWTO.md](HOWTO.md)** for a step-by-step walkthrough in VS Code
-> (venv setup, one-click launch configs, notebooks, web UI, troubleshooting).
-> The terminal commands below are the short version.
 
-```bash
-# 1. install deps
-python3 -m pip install -r requirements.txt
 
-# 2. run the whole pipeline (download -> DB -> EDA -> train -> eval)
-PYTHONPATH=src python3 -m ids_pipeline.run_pipeline
 
-# 3. open the interactive web UI (pages: Overview, SQL playground,
-#    EDA explorer, Model results, Live prediction)
-./run_app.sh
-# or:  PYTHONPATH=src streamlit run app/streamlit_app.py
-
-# 4. or run individual pipeline steps
-PYTHONPATH=src python3 -m ids_pipeline.download_data
-PYTHONPATH=src python3 -m ids_pipeline.build_database
-PYTHONPATH=src python3 -m ids_pipeline.train_models --cv-folds 5
-
-# 5. poke at the database directly
-sqlite3 data/processed/ids.sqlite < sql/example_queries.sql
-
-# 6. unit tests (uses synthetic data, no internet needed)
-PYTHONPATH=src python3 -m pytest tests/ -v
-```
-
-Useful flags on `run_pipeline`:
-
-| Flag | What it does |
-|------|--------------|
-| `--skip-download` | Use whatever is already in `data/raw/`. |
-| `--skip-db` | Reuse the existing `data/processed/ids.sqlite`. |
-| `--eda-only` | Build the DB and figures, skip training. |
-| `--quick` | Subsample to 10% for a fast smoke test. |
-| `--cv-folds 5` | Also run 5-fold stratified CV on the train split. |
 
 ## Web UI (Streamlit)
 
