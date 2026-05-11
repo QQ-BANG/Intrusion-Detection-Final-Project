@@ -23,9 +23,9 @@ There are three parts:
    the EDA queries are short.
 2. Data science. The data gets cleaned, deduplicated, profiled, and
    visualized with pandas, seaborn, and matplotlib.
-3. Machine learning. We train four classifiers (Logistic Regression,
+3. Machine learning. I trained four classifiers (Logistic Regression,
    Random Forest, Histogram Gradient Boosting, and a small MLP) and
-   evaluate them on the official held-out `KDDTest+` split. The
+   evaluate them on the official held-out `KDDTest+` split. TheThe 
    problem is framed both as binary (normal vs. attack) and as a
    5-way classification over the DARPA families (DoS, Probe, R2L,
    U2R, normal).
@@ -39,48 +39,13 @@ There are three parts:
 | Records    | 125,973 train + 22,544 test |
 | Features   | 41 per connection (38 numeric + 3 categorical) |
 | Targets    | `label` (39 attack types), collapsed into 5 broad families |
-| License    | Public, released by University of New Brunswick |
 
 The download script tries a couple of mirrors automatically. If your
 network blocks GitHub raw, just drop `KDDTrain+.txt` and
 `KDDTest+.txt` into `data/raw/` by hand and the rest of the pipeline
 still runs.
 
-## Repo layout
 
-```
-.
-├── README.md                  # Project overview (this file)
-├── HOWTO.md                   # Step-by-step instructions to run everything
-├── requirements.txt
-├── app/
-│   └── streamlit_app.py       # Interactive web UI
-├── run_app.sh                 # `./run_app.sh` to launch the UI
-├── docs/
-│   ├── proposal.md            # Project proposal (Part 1)
-│   └── final_report.md        # Final report (Part 2)
-├── sql/
-│   ├── schema.sql             # Normalized schema for SQLite
-│   └── example_queries.sql    # Analytical queries used in the report
-├── src/ids_pipeline/
-│   ├── config.py              # Paths, constants, attack-family map
-│   ├── download_data.py       # NSL-KDD downloader
-│   ├── clean_data.py          # Cleaning and typing
-│   ├── schema.py              # SQLAlchemy version of schema.sql
-│   ├── build_database.py      # Loads CSV into SQLite
-│   ├── features.py            # Preprocessing pipeline
-│   ├── visualize.py           # EDA + result plots
-│   ├── evaluate.py            # Metrics helpers
-│   ├── train_models.py        # Model training + evaluation
-│   └── run_pipeline.py        # End-to-end CLI
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_database_queries.ipynb
-│   └── 03_modeling.ipynb
-├── tests/                     # pytest tests on a synthetic corpus
-├── data/                      # raw + processed (gitignored)
-└── outputs/                   # figures, models, reports (gitignored)
-```
 
 ## Quick start
 
