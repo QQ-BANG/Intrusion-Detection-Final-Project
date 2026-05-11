@@ -112,14 +112,8 @@ Also trained on the 5-class family target.
 
 ### 2.6 Evaluation protocol
 
-* Train on `KDDTrain+`, test on `KDDTest+`. The test set is touched
-  exactly once.
-* Metrics: accuracy, precision, recall, F1, ROC-AUC for binary; full
-  per-class report and confusion matrix for the multi-class version.
-* Optional 5-fold stratified CV on the train split for variance
-  estimates (`--cv-folds 5`).
 
-The model is trained on KDDTrain+ and evaluated on KDDTest+, with the test set used only once at the final evaluation stage. For the binary classification version, I report accuracy, precision, recall, F1-score, and ROC-AUC to measure overall performance and the model's ability to separate normal and attack traffic. For the multi-class version, I included a full per class classification report and a confusion matrix so that performance can be compared across each attack category. I also include an optional 5-fold stratified cross-validation step on the training split using --cv-folds 5, which helps estimate how much the model’s performance varies across different training folds.
+The model is trained on KDDTrain+ and evaluated on KDDTest+, with the test set used only once at the final evaluation stage. For the binary classification version, I report accuracy, precision, recall, F1-score, and ROC-AUC to measure overall performance and the model's ability to separate normal and attack traffic. For the multi-class version, I included a full per-class classification report and a confusion matrix so that performance can be compared across each attack category. I also include an optional 5-fold stratified cross-validation step on the training split using --cv-folds 5, which helps estimate how much the model’s performance varies across different training folds.
 
 ## 3. Results
 
