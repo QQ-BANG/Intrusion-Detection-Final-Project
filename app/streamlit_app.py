@@ -21,7 +21,6 @@ import streamlit as st
 from sqlalchemy import text
 
 # add src/ to path so the ids_pipeline imports work when streamlit launches
-# this file directly. Hacky but simpler than installing the package.
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
