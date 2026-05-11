@@ -30,8 +30,7 @@ ENV/
 .ipynb_checkpoints/
 
 # IDE
-# Note: we intentionally check in .vscode/ for this project so users get
-# the launch configs / recommended extensions out of the box.
+# I intentionally check in .vscode/ for this project so users get the launch configs / recommended extensions out of the box.
 .idea/
 *.swp
 *.swo
