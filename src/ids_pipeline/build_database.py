@@ -52,6 +52,7 @@ def build_database(raw_dir=None, db_url=None, db_path=None):
     train = load_split(raw_dir, "KDDTrain+.txt", "train")
     test = load_split(raw_dir, "KDDTest+.txt", "test")
     full = pd.concat([train, test], ignore_index=True)
+    
     log.info("Loaded %d train + %d test rows", len(train), len(test))
 
     engine = get_engine(db_url)
@@ -88,6 +89,7 @@ def build_database(raw_dir=None, db_url=None, db_path=None):
     # build lookup dicts to swap strings -> FK ids
     proto_map = dict(zip(protocols["protocol_name"], protocols["protocol_id"]))
     svc_map = dict(zip(services["service_name"], services["service_id"]))
+    
     flag_map = dict(zip(flags["flag_name"], flags["flag_id"]))
     attack_map = dict(zip(attack_types["attack_label"], attack_types["attack_id"]))
 
