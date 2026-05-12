@@ -36,7 +36,6 @@ FEATURE_COLUMNS = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 
 def load_dataframe(db_url=None, split=None):
     # pulls connection rows joined with their dim tables.
-    # split=None -> all rows. split='train' or 'test' filters.
     if db_url is None:
         db_url = config.DB_URL
     engine = get_engine(db_url)
